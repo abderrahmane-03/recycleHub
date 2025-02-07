@@ -1,0 +1,60 @@
+<div class="max-w-3xl mx-auto p-10">
+    <h2 class="text-2xl font-bold mb-6">Profil utilisateur</h2>
+
+    <div class="bg-white shadow rounded-lg p-6">
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <!-- Profile Photo Upload -->
+            <div class="flex items-center space-x-4">
+                <img class="h-16 w-16 rounded-full" [src]="profileForm.value.profilePhoto || 'assets/default-avatar.png'" alt="Profile">
+                <input type="file" (change)="onFileSelected($event)" class="text-sm text-gray-500">
+            </div>
+
+            <!-- Editable User Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div>
+                    <label class="block font-semibold">Prénom:</label>
+                    <input formControlName="firstName" class="w-full border p-2 rounded">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Nom:</label>
+                    <input formControlName="lastName" class="w-full border p-2 rounded">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Email:</label>
+                    <input formControlName="email" type="email" class="w-full border p-2 rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">Password:</label>
+                    <input formControlName="password" type="text" class="w-full border p-2 rounded">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Téléphone:</label>
+                    <input formControlName="phone" class="w-full border p-2 rounded">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Date de naissance:</label>
+                    <input formControlName="birthdate" type="date" class="w-full border p-2 rounded">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Adresse:</label>
+                    <input formControlName="address" class="w-full border p-2 rounded">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" (click)="deleteAccount()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                  Supprimer le compte
+              </button>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                  Enregistrer
+              </button>
+            </div>
+        </form>
+    </div>
+</div>

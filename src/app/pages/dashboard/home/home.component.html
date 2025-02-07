@@ -1,0 +1,43 @@
+<div class="p-26">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Tableau de bord</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Points Card -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Vos points</h3>
+                <p class="text-3xl font-bold text-green-600">1,250 pts</p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4">Actions rapides</h3>
+                <button routerLink="/collecte/request" class="w-full bg-green-600 text-white py-2 px-4 rounded-md mb-2 hover:bg-green-700">
+          Nouvelle demande
+        </button>
+                <button class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">
+          Convertir points
+        </button>
+            </div>
+
+            <!-- Recent Requests -->
+            <div class="bg-white p-6 rounded-lg shadow col-span-2">
+                <h3 class="text-lg font-semibold mb-4">Dernières demandes</h3>
+                <div class="space-y-4">
+                    <!-- <div *ngFor="let request of requests" class="border-b pb-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">{{ request.type }}</span>
+                            <span class="px-2 py-1 text-sm rounded-full" [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': request.status === 'En attente',
+                      'bg-green-100 text-green-800': request.status === 'Validée'
+                    }">
+                {{ request.status }}
+              </span>
+                        </div>
+                        <p class="text-sm text-gray-500">{{ request.date | date }}</p>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

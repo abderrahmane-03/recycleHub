@@ -1,3 +1,61 @@
-<h1 class="text-3xl font-bold underline bg-blue-200">
-    Hello world!
-</h1>
+<div class="p-4 w-full fixed">
+    <!-- Navigation Bar -->
+    <div class="p-2 text-gray-900 bg-white rounded-lg shadow-lg font-medium capitalize flex items-center justify-between">
+        <!-- Logo -->
+        <span class="px-2 mr-2 border-r border-gray-800">
+          <img src="https://www.freepnglogos.com/uploads/recycle-png/download-recycling-symbol-the-original-recycle-logo-6.png"
+               alt="RecycleHub Logo"
+               class="w-12 h-12 -mt-1 inline mx-auto cursor-pointer"
+               routerLink="/">
+      </span>
+
+        <!-- Navigation Links -->
+        <div class="flex items-center space-x-4">
+            <!-- Always visible links -->
+            <a routerLink="/" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                <i class="fas fa-home mr-1"></i> Home
+            </a>
+
+            <a routerLink="/categories" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                <i class="fas fa-stream mr-1"></i> Categories
+            </a>
+
+            <a routerLink="/about" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                <i class="fas fa-info-circle mr-1"></i> About
+            </a>
+
+            <!-- Conditional Links -->
+            <div *ngIf="!authService.isLoggedIn()">
+                <a routerLink="/login" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Login
+                </a>
+
+                <a routerLink="/register" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                    <i class="fas fa-user-plus mr-1"></i> Register
+                </a>
+            </div>
+
+            <!-- Logged-in User Section -->
+            <div *ngIf="authService.isLoggedIn()" class="flex items-center space-x-2">
+                <!-- Notifications -->
+                <button class="relative p-2 hover:bg-gray-200 rounded-full">
+                  <i class="fas fa-bell"></i>
+                  <span class="absolute top-0 right-0 -mt-1 -mr-1 text-xs bg-red-500 text-white px-2 rounded-full">3</span>
+              </button>
+
+                <!-- Profile Dropdown -->
+                <div class="relative">
+                    <button class="p-2 hover:bg-gray-200 rounded-full">
+                      <i class="fas fa-user"></i>
+                  </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                        <a routerLink="/profile" class="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
+                        <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>
