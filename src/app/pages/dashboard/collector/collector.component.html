@@ -1,0 +1,80 @@
+<div class="p-26">
+    <h2 class="text-2xl font-bold mb-6">Demandes de collecte</h2>
+
+    <div *ngFor="let request of filteredRequests" class="bg-white p-4 rounded-lg shadow mb-4">
+        <!-- Header -->
+        <div class="flex justify-between items-center cursor-pointer" (click)="toggleDetails(request.id)">
+            <div>
+                <p class="font-medium">{{ request.wasteTypes.join(', ') }}</p>
+                <p class="text-sm text-gray-500">{{ request.collectionDate | date:'dd/MM/yyyy' }} - {{ request.collectionTime }}</p>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="px-2 py-1 text-sm rounded-full mb-2" [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': request.status === 'en attente',
+                      'bg-blue-100 text-blue-800': request.status === 'occupée',
+                      'bg-orange-100 text-orange-800': request.status === 'en cours',
+                      'bg-green-100 text-green-800': request.status === 'validée',
+                      'bg-red-100 text-red-800': request.status === 'rejetée'
+                    }">
+                  {{ request.status }}
+              </span>
+                <button *ngIf="request.status === 'en attente'" (click)="updateStatus(request.id, 'occupée'); $event.stopPropagation()" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                  Accepter
+              </button>
+            </div>
+        </div>
+
+        <!-- Expanded Details -->
+        <div *ngIf="expandedRequest === request.id" class="mt-4 border-t pt-4">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="font-medium">Poids estimé:</p>
+                    <p>{{ request.estimatedWeight / 1000 }} kg</p>
+                </div>
+
+                <div>
+                    <p class="font-medium">Adresse:</p>
+                    <p>{{ request.collectionAddress }}</p>
+                </div>
+
+                <div *ngIf="request.notes" class="col-span-2">
+                    <p class="font-medium">Notes:</p>
+                    <p>{{ request.notes }}</p>
+                </div>
+
+                <div *ngIf="request.photos?.length" class="col-span-2">
+                    <p class="font-medium mb-2">Photos des déchets:</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <img *ngFor="let photo of request.photos" [src]="photo" class="h-20 w-20 object-cover rounded">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collector Actions -->
+            <div *ngIf="request.status === 'occupée' || request.status === 'en cours'" class="mt-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Poids réel (kg)</label>
+                        <input type="number" [(ngModel)]="request.realWeight" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Photos de validation</label>
+                        <input type="file" multiple (change)="onValidationPhotos($event, request)" class="w-full p-2 border rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-4">
+                    <button (click)="updateStatus(request.id, 'en cours')" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+                      Commencer la collecte
+                  </button>
+                    <button (click)="validateRequest(request)" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                      Valider
+                  </button>
+                    <button (click)="updateStatus(request.id, 'rejetée')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                      Rejeter
+                  </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,34 +1,60 @@
-<!-- request.component.html -->
-<div class="max-w-2xl mx-auto p-6">
+<div class="max-w-2xl mx-auto p-20">
     <h2 class="text-2xl font-bold mb-6">Nouvelle demande de collecte</h2>
 
-    <form class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Waste Type -->
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-700">Type de déchets</label>
-                <div class="mt-2 grid grid-cols-2 gap-3">
-                    <!-- <div *ngFor="let type of wasteTypes" class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-green-600 border-gray-300 rounded">
-                        <label class="ml-2 text-sm text-gray-700">{{ type }}</label>
-                    </div> -->
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" class="bg-white shadow rounded-lg p-6 space-y-4">
+        <!-- Waste Types -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Types de déchets</label>
+            <div class="mt-2 grid grid-cols-2 gap-3">
+                <div *ngFor="let type of wasteTypes" class="flex items-center">
+                    <input type="checkbox" [value]="type" (change)="onWasteTypeChange($event)">
+                    <label class="ml-2 text-sm text-gray-700">{{ type }}</label>
                 </div>
-            </div>
-
-            <!-- Weight Input -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Poids estimé (kg)</label>
-                <input type="number" min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
-            </div>
-
-            <!-- Date Picker -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Date de collecte</label>
-                <input type="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
+        <!-- Photos -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Photos des déchets (optionnel)</label>
+            <input type="file" multiple (change)="onFileSelected($event)" class="mt-1 block w-full">
+        </div>
+
+        <!-- Estimated Weight -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Poids estimé (en grammes, min 1000g)</label>
+            <input type="number" formControlName="estimatedWeight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
+        </div>
+
+        <!-- Collection Address -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Adresse de collecte</label>
+            <input type="text" formControlName="collectionAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
+        </div>
+
+        <!-- Collection Date -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Date de collecte</label>
+            <input type="date" formControlName="collectionDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
+        </div>
+
+        <!-- Collection Time -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Créneau horaire (09:00 - 18:00)</label>
+            <select formControlName="collectionTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm">
+        <option *ngFor="let time of timeSlots" [value]="time">{{ time }}</option>
+      </select>
+        </div>
+
+        <!-- Notes -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Notes supplémentaires (optionnel)</label>
+            <textarea formControlName="notes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"></textarea>
+        </div>
+        <div *ngIf="validationMessage" class="text-red-500 text-sm p-2 border border-red-300 rounded">
+            {{ validationMessage }}
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" [disabled]="requestForm.invalid" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
       Soumettre la demande
     </button>
     </form>
