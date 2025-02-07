@@ -1,5 +1,6 @@
+// src/app/pages/auth/register/register.component.ts
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup,FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -13,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  profilePhotoPreview: string = 'assets/default-avatar.png';
 
   constructor(
     private fb: FormBuilder,
@@ -26,14 +28,26 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       birthdate: ['', Validators.required],
-      address: ['', Validators.required],
+      // Use a nested FormGroup for address
+      address: this.fb.group({
+        city: ['', Validators.required],
+        // Add additional address fields if needed, e.g.,
+        // street: [''],
+        // postalCode: ['']
+      }),
       profilePhoto: ['']
     });
   }
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      this.authService.register(this.registerForm.value).subscribe({
+      // Create user object with photo data URL
+      const userData = {
+        ...this.registerForm.value,
+        profilePhoto: this.profilePhotoPreview
+      };
+
+      this.authService.register(userData).subscribe({
         next: (success) => {
           if (success) {
             this.router.navigate(['/login']);
@@ -47,29 +61,19 @@ export class RegisterComponent {
       });
     }
   }
+
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
-      this.registerForm.patchValue({
-        profilePhoto: file
-      });
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profilePhotoPreview = e.target.result;
+        // Update form control with data URL
+        this.registerForm.patchValue({
+          profilePhoto: e.target.result
+        });
+      };
+      reader.readAsDataURL(file);
     }
   }
-  // saveProfile() {
-  //   if (this.profileForm.valid && this.userIndex !== -1) {
-  //     const updatedUser = this.profileForm.getRawValue(); // Get form data
-  //     updatedUser.email = this.loggedUser.email; // Ensure email stays the same
-
-  //     // Update user in array
-  //     this.users[this.userIndex] = updatedUser;
-
-  //     // Save back to localStorage
-  //     localStorage.setItem("users", JSON.stringify(this.users));
-  //     localStorage.setItem("user", JSON.stringify(updatedUser));
-
-  //     this.loggedUser = updatedUser; // Update UI
-  //     alert("Profil mis à jour avec succès !");
-  //   }
-  // }
-
 }

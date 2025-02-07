@@ -1,3 +1,4 @@
+<!-- home.component.html -->
 <div class="p-26">
     <div class="max-w-7xl mx-auto">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Tableau de bord</h1>
@@ -6,18 +7,18 @@
             <!-- Points Card -->
             <div class="bg-white p-6 rounded-lg shadow">
                 <h3 class="text-lg font-semibold mb-2">Vos points</h3>
-                <p class="text-3xl font-bold text-green-600">1,250 pts</p>
+                <p class="text-3xl font-bold text-green-600">{{ currentPoints }} pts</p>
             </div>
 
             <!-- Quick Actions -->
             <div class="bg-white p-6 rounded-lg shadow">
                 <h3 class="text-lg font-semibold mb-4">Actions rapides</h3>
-                <button routerLink="/collecte/request" class="w-full bg-green-600 text-white py-2 px-4 rounded-md mb-2 hover:bg-green-700">
-          Nouvelle demande
-        </button>
-                <button class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">
-          Convertir points
-        </button>
+                <button routerLink="/collection-request" class="w-full bg-green-600 text-white py-2 px-4 rounded-md mb-2 hover:bg-green-700">
+                  Nouvelle demande
+              </button>
+                <button routerLink="/convertpoints" class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">
+                  Convertir points
+              </button>
             </div>
 
             <!-- Recent Requests -->

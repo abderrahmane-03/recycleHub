@@ -1,3 +1,4 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -6,67 +7,84 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  // BehaviorSubject to track login status
+  private currentPoints = 0;
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private router: Router) {}
 
-  // Check if a token exists in local storage
   private hasToken(): boolean {
     return !!localStorage.getItem('user');
   }
 
-  // Register a new user
   register(user: any): Observable<boolean> {
-    // Simulate registration by saving user data to local storage
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     users.push(user);
     localStorage.setItem('users', JSON.stringify(users));
-// In AuthService register method
-    if (user.profilePhoto) {
-      const reader = new FileReader();
-      reader.readAsDataURL(user.profilePhoto);
-      reader.onload = () => {
-        user.profilePhoto = reader.result as string;
-      };
-    }
 
-    return of(true); // Simulate successful registration
+    this.login(user.email, user.password).subscribe((success) => {
+      if (success) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+    return of(true);
   }
 
-  // Login with email and password
   login(email: string, password: string): Observable<boolean> {
-    // Simulate login by checking local storage
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(
-      (u: any) => u.email === email && u.password === password
-    );
-
+    const user = users.find((u: any) => u.email === email && u.password === password);
     if (user) {
-      // Save user data to local storage
       localStorage.setItem('user', JSON.stringify(user));
-      this.isLoggedInSubject.next(true); // Update login status
-      return of(true); // Simulate successful login
+      this.isLoggedInSubject.next(true);
+      return of(true);
     } else {
-      return of(false); // Simulate failed login
+      return of(false);
     }
   }
 
-  // Logout the user
   logout(): void {
-    localStorage.removeItem('user'); // Remove user data from local storage
-    this.isLoggedInSubject.next(false); // Update login status
-    this.router.navigate(['/login']); // Redirect to login page
+    localStorage.removeItem('user');
+    this.isLoggedInSubject.next(false);
+    this.router.navigate(['/login']);
   }
 
-  // Get the current user
   getCurrentUser(): any {
     return JSON.parse(localStorage.getItem('user') || '{}');
   }
 
-  // Check if the user is logged in
   isLoggedIn(): boolean {
     return this.hasToken();
+  }
+
+  // NEW: Add user points
+  addUserPoints(userId: string, points: number): void {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find((u: any) => u.email === userId);
+    if (user) {
+      user.points = (user.points || 0) + points;
+      localStorage.setItem('users', JSON.stringify(users));
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (currentUser.email === userId) {
+        currentUser.points = user.points;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+      }
+    }
+  }
+
+  // NEW: Update user redemptions
+  updateUserRedemptions(redemptions: any[]): void {
+    const user = this.getCurrentUser();
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+    user.redemptions = redemptions;
+    user.points = this.currentPoints;
+
+    localStorage.setItem('user', JSON.stringify(user));
+
+    const index = users.findIndex((u: any) => u.email === user.email);
+    if (index !== -1) {
+      users[index] = user;
+      localStorage.setItem('users', JSON.stringify(users));
+    }
   }
 }

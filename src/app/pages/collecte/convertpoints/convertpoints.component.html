@@ -1,0 +1,49 @@
+<!-- points.component.html -->
+<div class="p-26">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Conversion des points</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Points Overview -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Solde actuel</h3>
+                <p class="text-3xl font-bold text-green-600">{{ currentPoints }} pts</p>
+                <p class="text-sm text-gray-500 mt-2">1 point = 0.5 DH</p>
+            </div>
+
+            <!-- Conversion Options -->
+            <div class="bg-white p-6 rounded-lg shadow lg:col-span-2">
+                <h3 class="text-lg font-semibold mb-4">Options de conversion</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div *ngFor="let option of redemptionOptions" class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-800 mb-2">{{ option.points }}</p>
+                            <p class="text-sm text-gray-600 mb-4">points</p>
+                            <p class="text-lg font-semibold text-green-600 mb-4">{{ option.reward }}</p>
+                            <button (click)="redeemPoints(option)" [disabled]="currentPoints < option.points" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                              Convertir
+                          </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion History -->
+            <div class="bg-white p-6 rounded-lg shadow lg:col-span-3">
+                <h3 class="text-lg font-semibold mb-4">Historique des conversions</h3>
+                <div *ngIf="redemptionHistory.length === 0" class="text-gray-500 text-center py-4">
+                    Aucune conversion effectuée
+                </div>
+                <div *ngFor="let item of redemptionHistory" class="border-b py-3 last:border-b-0">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium text-gray-800">{{ item.reward }}</p>
+                            <p class="text-sm text-gray-500">{{ item.date | date:'dd/MM/yyyy à HH:mm' }}</p>
+                        </div>
+                        <span class="text-red-500 font-medium">- {{ item.points }} pts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
