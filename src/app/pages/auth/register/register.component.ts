@@ -28,12 +28,8 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       birthdate: ['', Validators.required],
-      // Use a nested FormGroup for address
       address: this.fb.group({
         city: ['', Validators.required],
-        // Add additional address fields if needed, e.g.,
-        // street: [''],
-        // postalCode: ['']
       }),
       profilePhoto: ['']
     });

@@ -9,6 +9,11 @@ import { CollectionRequest } from '../models/collection-request.model';
 export class CollectionService {
   private readonly storageKey = 'collectionRequests';
 
+  getAllRequests(): Observable<CollectionRequest[]> {
+    const requests = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+    return of(requests); // Wrap in Observable
+  }
+
   // Get all requests for a user
   getUserRequests(userId: string): Observable<CollectionRequest[]> {
     const requests = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
@@ -22,7 +27,7 @@ export class CollectionService {
     localStorage.setItem(this.storageKey, JSON.stringify(requests));
     return of(true);
   }
-
+// Add this method to get all requests
   // Update a request
   updateRequest(requestId: string, updates: Partial<CollectionRequest>): Observable<boolean> {
     const requests = JSON.parse(localStorage.getItem(this.storageKey) || '[]');

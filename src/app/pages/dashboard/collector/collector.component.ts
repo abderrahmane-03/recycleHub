@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CollectionService } from '../../../services/collection.service';
 import { AuthService } from '../../../services/auth.service';
+import { NotificationService } from '../../../services/notification.service';
 import { CollectionRequest } from '../../../models/collection-request.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -24,12 +25,13 @@ export class CollectorDashboardComponent {
 
   constructor(
     private collectionService: CollectionService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
     const collector = this.authService.getCurrentUser();
-    this.collectionService.getRequestsByCity(collector.address.city)
+    this.collectionService.getRequestsByCity(collector.address)
       .subscribe(requests => {
         this.filteredRequests = requests.filter(r => r.status !== 'validée' && r.status !== 'rejetée');
       });
@@ -73,13 +75,21 @@ export class CollectorDashboardComponent {
       'métal': 5
     };
 
-
     const points = request.wasteTypes.reduce((sum, type) =>
       sum + (pointsMap[type] * request.realWeight! / 1000), 0);
 
-    this.authService.addUserPoints(request.userId, Math.round(points));
-  }
+    const roundedPoints = Math.round(points);
 
+    // Add points to user
+    this.authService.addUserPoints(request.userId, roundedPoints);
+
+    // Send notification
+    this.notificationService.addNotification(
+      request.userId, // Make sure this is the user's email
+      'Collecte validée!',
+      `Vous avez gagné ${roundedPoints} points! Détails: ${request.wasteTypes.join(', ')} - ${request.realWeight! / 1000}kg`
+    );
+  }
   onValidationPhotos(event: any, request: CollectionRequest) {
     const files = event.target.files;
     const reader = new FileReader();

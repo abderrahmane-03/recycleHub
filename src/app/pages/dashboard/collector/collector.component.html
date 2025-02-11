@@ -21,6 +21,9 @@
                 <button *ngIf="request.status === 'en attente'" (click)="updateStatus(request.id, 'occupée'); $event.stopPropagation()" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                   Accepter
               </button>
+                <button *ngIf="request.status === 'en attente'" (click)="updateStatus(request.id, 'rejetée'); $event.stopPropagation()" class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                  Rejeter
+            </button>
             </div>
         </div>
 

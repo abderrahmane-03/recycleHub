@@ -1,4 +1,4 @@
-<div class="p-4 w-full fixed">
+<div class="p-4 w-full fixed z-50">
     <!-- Navigation Bar -->
     <div class="p-2 text-gray-900 bg-white rounded-lg shadow-lg font-medium capitalize flex items-center justify-between">
         <!-- Logo -->
@@ -11,25 +11,39 @@
 
         <!-- Navigation Links -->
         <div class="flex items-center space-x-4">
-            <!-- Always visible links -->
-            <a routerLink="/" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
-                <i class="fas fa-home mr-1"></i> Home
-            </a>
 
-            <a routerLink="/categories" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
-                <i class="fas fa-stream mr-1"></i> Categories
-            </a>
 
-            <a routerLink="/about" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
-                <i class="fas fa-info-circle mr-1"></i> About
-            </a>
+            <!-- Role-Based Links -->
+            <ng-container *ngIf="authService.isLoggedIn()">
+                <!-- Common Links -->
+                <a routerLink="/" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                    <i class="fas fa-home mr-1"></i> Home
+                </a>
+                <!-- Regular User Links -->
+                <div *ngIf="!authService.isCollector()" class="flex items-center space-x-2">
+                    <a routerLink="/collection-list" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                        <i class="fas fa-list mr-1"></i> Mes Demandes
+                    </a>
+                    <a routerLink="/convertpoints" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                        <i class="fas fa-coins mr-1"></i> Mes Points
+                    </a>
+                </div>
 
-            <!-- Conditional Links -->
-            <div *ngIf="!authService.isLoggedIn()">
+                <!-- Collector Links -->
+                <div *ngIf="authService.isCollector()" class="flex items-center space-x-2">
+                    <a routerLink="/collectorDashboard" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
+                        <i class="fas fa-tasks mr-1"></i> Collectes
+                    </a>
+                </div>
+            </ng-container>
+
+
+
+            <!-- Auth Links -->
+            <div *ngIf="!authService.isLoggedIn()" class="flex items-center space-x-2">
                 <a routerLink="/login" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
                     <i class="fas fa-sign-in-alt mr-1"></i> Login
                 </a>
-
                 <a routerLink="/register" class="px-2 py-1 hover:bg-gray-200 hover:text-gray-700 text-sm rounded transition-colors">
                     <i class="fas fa-user-plus mr-1"></i> Register
                 </a>
@@ -38,19 +52,42 @@
             <!-- Logged-in User Section -->
             <div *ngIf="authService.isLoggedIn()" class="flex items-center space-x-2">
                 <!-- Notifications -->
-                <button class="relative p-2 hover:bg-gray-200 rounded-full">
-                  <i class="fas fa-bell"></i>
-                  <span class="absolute top-0 right-0 -mt-1 -mr-1 text-xs bg-red-500 text-white px-2 rounded-full">3</span>
-              </button>
+                <div class="relative group">
+                    <button class="p-2 hover:bg-gray-200 rounded-full relative">
+                      <i class="fas fa-bell"></i>
+                      <span *ngIf="unreadNotifications > 0"
+                            class="absolute top-0 right-0 -mt-1 -mr-1 text-xs bg-red-500 text-white px-2 rounded-full">
+                          {{ unreadNotifications }}
+                      </span>
+                  </button>
+                    <!-- Notifications Dropdown -->
+                    <div class="hidden group-hover:block absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-2 z-50">
+                        <div *ngIf="notifications.length === 0" class="px-4 py-2 text-sm text-gray-500">
+                            Aucune nouvelle notification
+                        </div>
+                        <div *ngFor="let notif of notifications" class="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0">
+                            <p class="text-sm font-medium">{{ notif.title }}</p>
+                            <p class="text-xs text-gray-500">{{ notif.message }}</p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                {{ notif.date | date:'dd/MM/yyyy à HH:mm' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Profile Dropdown -->
-                <div class="relative">
+                <div class="relative group">
                     <button class="p-2 hover:bg-gray-200 rounded-full">
                       <i class="fas fa-user"></i>
                   </button>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
-                        <a routerLink="/profile" class="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
-                        <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
+                    <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a routerLink="/profile" class="block px-4 py-2 text-sm hover:bg-gray-100">Profil</a>
+                        <div *ngIf="authService.isCollector()">
+                            <a routerLink="/collector-dashboard" class="block px-4 py-2 text-sm hover:bg-gray-100">Tableau de bord</a>
+                        </div>
+                        <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                          Déconnexion
+                      </button>
                     </div>
                 </div>
             </div>

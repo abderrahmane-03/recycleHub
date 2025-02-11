@@ -8,6 +8,7 @@ import { CollectionListComponent } from './pages/collecte/list/collecte-list/col
 import { EditRequestComponent } from './pages/collecte/edit-request/edit-request.component';
 import { CollectorDashboardComponent } from './pages/dashboard/collector/collector.component';
 import { PointsComponent } from './pages/collecte/convertpoints/convertpoints.component';
+import { RequestsResolver } from './resolvers/requests.resolver';
 export const routes: Routes = [
   { path: 'edit-request/:id',
      component: EditRequestComponent
@@ -16,17 +17,18 @@ export const routes: Routes = [
      component: CollectionRequestComponent
     },
   { path: 'collection-list',
-     component: CollectionListComponent
+     component: CollectionListComponent,
+     resolve: { requestsLoaded: RequestsResolver },
      },
-     { path: 'collectiorDashboard',
+     { path: 'collectorDashboard',
       component: CollectorDashboardComponent
       },
 
       { path: 'convertpoints', component: PointsComponent },
           {
-    path:'',
-  component: HomeComponent,
-  },
+          path:'',
+        component: HomeComponent,
+        },
   {
       path:'login',
       component: LoginComponent,

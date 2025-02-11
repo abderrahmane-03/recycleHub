@@ -7,6 +7,9 @@ import { CollectionRequest } from '../../../models/collection-request.model';
 import { lastValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { addRequest, updateRequest } from '../../../state/collection.actions';
+
 @Component({
   selector: 'app-collection-request',
   standalone: true,
@@ -29,7 +32,8 @@ export class CollectionRequestComponent implements OnInit {
     private fb: FormBuilder,
     private collectionService: CollectionService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private store: Store 
   ) {
     // Initialize the form
     this.requestForm = this.fb.group({
@@ -96,51 +100,21 @@ export class CollectionRequestComponent implements OnInit {
 
   // Handle form submission
   async onSubmit(): Promise<void> {
-    this.validationMessage = '';
-
     if (this.requestForm.valid) {
-      const user = this.authService.getCurrentUser();
-      const collectionDate = this.requestForm.value.collectionDate;
-      const estimatedWeight = this.requestForm.value.estimatedWeight;
-
-      // Validate active requests and daily weight limit for new requests
-      if (!this.isEditMode) {
-        const activeCount = await lastValueFrom(
-          this.collectionService.getActiveRequestsCount(user.email)
-        );
-        if (activeCount >= 3) {
-          this.validationMessage =
-            'Vous ne pouvez pas avoir plus de 3 demandes actives';
-          return;
-        }
-
-        if (estimatedWeight > this.remainingCapacity) {
-          this.validationMessage = `Limite quotidienne de 10kg atteinte. Vous pouvez encore collecter ${this.remainingCapacity / 1000} kg aujourd'hui.`;
-          return;
-        }
-      }
-
-      // Prepare request data
-      const requestData = {
+      const request = {
         id: this.isEditMode ? this.existingRequest!.id : this.generateId(),
-        userId: user.email,
+        userId: this.authService.getCurrentUser().email,
         ...this.requestForm.value,
         photos: this.photos,
-        status: this.isEditMode ? this.existingRequest!.status : 'en attente',
+        status: this.isEditMode ? this.existingRequest!.status : 'en attente'
       };
 
-      // Save or update the request
       if (this.isEditMode) {
-        this.collectionService
-          .updateRequest(requestData.id, requestData)
-          .subscribe((success) => {
-            if (success) this.router.navigate(['']);
-          });
+        this.store.dispatch(updateRequest({ requestId: request.id, updates: request }));
       } else {
-        this.collectionService.createRequest(requestData).subscribe((success) => {
-          if (success) this.router.navigate(['']);
-        });
+        this.store.dispatch(addRequest({ request }));
       }
+      this.router.navigate(['']);
     }
   }
 
